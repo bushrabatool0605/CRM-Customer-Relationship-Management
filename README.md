@@ -215,10 +215,12 @@ App runs at: `http://localhost:5173`
 
 ##  Author
 
-**Your Name**
 - GitHub: [@bushrabatool0605](https://github.com/bushrabatool)
 - Assessment for: XDevFlow Internship
+## 🌐 Live Demo
 
+- **Frontend:** https://crm-customer-relationship-management-3qfd-8r4r7mctj.vercel.app
+- **Backend API:** https://crm-customer-relationship-managemen-mu.vercel.app
 ---
 
 ##  License
