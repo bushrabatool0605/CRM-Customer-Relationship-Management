@@ -13,7 +13,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.options('*', cors());
+// Yahan '*' ko hata kar '(.*)' kar dein
+app.options('(.*)', cors()); 
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -23,7 +25,10 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/leads', require('./routes/leadRoutes'));
 
-// Vercel ke liye connectDB har request pe
-connectDB();
+// Database connection ko middleware mein call karna behtar hai
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 module.exports = app;
