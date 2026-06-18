@@ -13,8 +13,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Yahan '*' ko hata kar '(.*)' kar dein
-app.options('(.*)', cors()); 
+// OPTIONS route hata dein, Express 5 ye handle kar leta hai
+// app.options('(.*)', cors()); <--- YEH LINE PURI HATA DEIN
 
 app.use(express.json());
 
@@ -25,7 +25,6 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/leads', require('./routes/leadRoutes'));
 
-// Database connection ko middleware mein call karna behtar hai
 app.use(async (req, res, next) => {
   await connectDB();
   next();
