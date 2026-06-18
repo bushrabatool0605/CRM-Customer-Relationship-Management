@@ -5,12 +5,16 @@ import useAuth from '../hooks/useAuth';
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth <= 768) setSidebarOpen(false);
   };
 
   return (
@@ -35,15 +39,27 @@ const Layout = ({ children }) => {
         </div>
 
         <nav className='sidebar-nav'>
-          <NavLink to='/dashboard' className={({ isActive }) => isActive ? 'active' : ''}>
+          <NavLink
+            to='/dashboard'
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={closeSidebarOnMobile}
+          >
             <span className='nav-icon'>📊</span>
             <span className='nav-text'>Dashboard</span>
           </NavLink>
-          <NavLink to='/leads' className={({ isActive }) => isActive ? 'active' : ''}>
+          <NavLink
+            to='/leads'
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={closeSidebarOnMobile}
+          >
             <span className='nav-icon'>👥</span>
             <span className='nav-text'>Leads</span>
           </NavLink>
-          <NavLink to='/leads/create' className={({ isActive }) => isActive ? 'active' : ''}>
+          <NavLink
+            to='/leads/create'
+            className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={closeSidebarOnMobile}
+          >
             <span className='nav-icon'>➕</span>
             <span className='nav-text'>Add Lead</span>
           </NavLink>
@@ -68,7 +84,7 @@ const Layout = ({ children }) => {
         </div>
       </aside>
 
-      {/* Hamburger for mobile when sidebar closed */}
+      {/* Hamburger always visible when sidebar closed */}
       {!sidebarOpen && (
         <button
           className='hamburger-btn'

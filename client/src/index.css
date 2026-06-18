@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
@@ -216,7 +221,8 @@ input, select, textarea {
 /* ===== LAYOUT ===== */
 .layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -440,7 +446,8 @@ input, select, textarea {
   flex: 1;
   padding: 30px;
   background: #f5f7fa;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   transition: margin-left 0.3s ease;
 }
 
@@ -651,11 +658,17 @@ tr:hover td {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 200;
     width: 250px;
   }
 
   .sidebar.closed {
     width: 0;
+    overflow: hidden;
   }
 
   .sidebar-overlay {
@@ -666,6 +679,8 @@ tr:hover td {
     margin-left: 0;
     padding: 20px;
     padding-top: 70px;
+    height: 100vh;
+    overflow-y: auto;
   }
 
   .main-content.expanded {
