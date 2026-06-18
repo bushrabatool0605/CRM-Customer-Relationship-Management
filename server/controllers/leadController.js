@@ -1,13 +1,11 @@
 const Lead = require('../models/Lead');
 
-// @desc    Get all leads (with search + filter)
-// @route   GET /api/leads
-// @access  Private
 const getLeads = async (req, res) => {
   try {
     const { search, status } = req.query;
 
-    let query = { createdBy: req.user._id };
+    // Admin sab leads dekh sakta hai
+    let query = req.user.role === 'admin' ? {} : { createdBy: req.user._id };
 
     if (status && status !== 'All') {
       query.status = status;
@@ -21,7 +19,9 @@ const getLeads = async (req, res) => {
       ];
     }
 
-    const leads = await Lead.find(query).sort({ createdAt: -1 });
+    const leads = await Lead.find(query)
+      .populate('createdBy', 'name email')
+      .sort({ createdAt: -1 });
 
     res.json(leads);
   } catch (error) {
@@ -29,19 +29,15 @@ const getLeads = async (req, res) => {
   }
 };
 
-// @desc    Get single lead
-// @route   GET /api/leads/:id
-// @access  Private
 const getLead = async (req, res) => {
   try {
-    const lead = await Lead.findById(req.params.id);
+    const lead = await Lead.findById(req.params.id).populate('createdBy', 'name email');
 
     if (!lead) {
       return res.status(404).json({ message: 'Lead not found' });
     }
 
-    // Make sure the logged in user owns this lead
-    if (lead.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && lead.createdBy._id.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -51,9 +47,6 @@ const getLead = async (req, res) => {
   }
 };
 
-// @desc    Create a lead
-// @route   POST /api/leads
-// @access  Private
 const createLead = async (req, res) => {
   try {
     const { fullName, email, phone, company, status } = req.body;
@@ -77,9 +70,6 @@ const createLead = async (req, res) => {
   }
 };
 
-// @desc    Update a lead
-// @route   PUT /api/leads/:id
-// @access  Private
 const updateLead = async (req, res) => {
   try {
     const lead = await Lead.findById(req.params.id);
@@ -88,8 +78,7 @@ const updateLead = async (req, res) => {
       return res.status(404).json({ message: 'Lead not found' });
     }
 
-    // Make sure the logged in user owns this lead
-    if (lead.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && lead.createdBy.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -105,9 +94,6 @@ const updateLead = async (req, res) => {
   }
 };
 
-// @desc    Delete a lead
-// @route   DELETE /api/leads/:id
-// @access  Private
 const deleteLead = async (req, res) => {
   try {
     const lead = await Lead.findById(req.params.id);
@@ -116,8 +102,7 @@ const deleteLead = async (req, res) => {
       return res.status(404).json({ message: 'Lead not found' });
     }
 
-    // Make sure the logged in user owns this lead
-    if (lead.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && lead.createdBy.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
