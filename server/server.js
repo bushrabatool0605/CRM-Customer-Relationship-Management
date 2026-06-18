@@ -1,33 +1,30 @@
 const express = require('express');
-const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const connectDB = require('./config/db');
+require('dotenv').config();
 
-dotenv.config();
+const authRoutes = require('./routes/authRoutes');
+const leadRoutes = require('./routes/leadRoutes');
 
 const app = express();
 
-// CORS — sabse pehle
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  next();
-});
-
-app.use(cors({ origin: '*' }));
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
   res.json({ message: 'XDevFlow CRM API is running...' });
 });
 
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/leads', require('./routes/leadRoutes'));
+app.use('/api/auth', authRoutes);
+app.use('/api/leads', leadRoutes);
 
-connectDB();
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Connected!'))
+  .catch((err) => console.log('MongoDB Error:', err));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;
